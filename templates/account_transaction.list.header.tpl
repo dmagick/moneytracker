@@ -1,4 +1,4 @@
-<table>
+<table id="account_transaction_list">
 	<tr>
 		<th>Account Name</th>
 		<th>Old Balance</th>

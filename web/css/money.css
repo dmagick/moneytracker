@@ -65,17 +65,17 @@ body {
 	margin: 2px;
 }
 
-#account_list {
+#account_transaction_list, #account_list {
 	width: 100%;
 	font-size: 11px;
 }
 
-#account_list TH {
+#account_transaction_list TH, #account_list TH {
 	text-align: left;
 	border-bottom: 1px solid;
 }
 
-#account_list TD {
+#account_transaction_list TD #account_list TD {
 	width: 25%;
 }
 
