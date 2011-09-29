@@ -1,0 +1,81 @@
+body {
+	font-family: verdana;
+	background-color: #E6E6E6;
+	font-size: 14px;
+}
+
+.header-link A {
+	color: #6A6A6A;
+	text-decoration: none;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+
+.header-link A:hover {
+	color: #969696;
+	text-transform: uppercase;
+}
+
+.wrapper {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	margin-left: 10%;
+	width: 80%;
+	border: 1px solid #5D5D5D;
+	background-color: #FFFFFF;
+	padding-bottom: 10px;
+	min-height: 750px;
+}
+
+.content {
+	width: 90%;
+	margin-left: 5%;
+}
+
+#header {
+	margin-top: 10px;
+	margin-right: 10%;
+	margin-left: 10%;
+	text-align: left;
+	font-size: 10px;
+}
+
+#account-header {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.account-header-link A {
+	color: #6A6A6A;
+	text-decoration: none;
+}
+
+.account-header-link A:hover {
+	color: #969696;
+}
+
+.account-field {
+	width: 300px;
+	float: left;
+	margin: 2px;
+}
+
+.account-value {
+	width: 500px;
+	margin: 2px;
+}
+
+#account_list {
+	width: 100%;
+	font-size: 11px;
+}
+
+#account_list TH {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+#account_list TD {
+	width: 25%;
+}
+
