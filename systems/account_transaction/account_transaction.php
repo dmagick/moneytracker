@@ -42,9 +42,19 @@ class Account_Transaction
         if (empty($_POST) === TRUE) {
             $accounts = Account::getAccounts();
             $select  = '<select name="account_id" id="account_id">';
-            $select .= '<option value="-1">Which account?</option>';
+
+            $selected = '';
+            if (sizeof($accounts) > 1) {
+                $selected = ' SELECTED';
+            }
+            $select .= '<option value="-1"'.$selected.'>Which account?</option>';
+
+            $selected = '';
+            if (sizeof($accounts) == 1) {
+                $selected = ' SELECTED';
+            }
             foreach ($accounts as $row => $account) {
-                $select .= '<option value="'.$account['account_id'].'">'.$account['account_name'].'</option>';
+                $select .= '<option value="'.$account['account_id'].'"'.$selected.'>'.$account['account_name'].'</option>';
             }
             $select .= '</select>';
             template::setKeyword('account_transaction.new', 'account_list', $select);
