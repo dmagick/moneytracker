@@ -3,7 +3,7 @@ class Account_Transaction
 {
     public static function listTransactions()
     {
-        $sql   = "SELECT a.account_id, a.account_name, a.account_number, l.transaction_amount, EXTRACT(EPOCH FROM l.transaction_date) AS transaction_date, l.transaction_description, l.account_balance_previous, l.account_balance_new FROM ".db::getPrefix()."accounts a INNER JOIN ".db::getPrefix()."account_transactions_log l ON (a.account_id=l.account_id) ORDER BY l.transaction_date DESC";
+        $sql   = "SELECT a.account_id, a.account_name, a.account_number, l.transaction_amount, EXTRACT(EPOCH FROM l.transaction_date) AS transaction_date, l.transaction_description, l.account_balance_previous, l.account_balance_new FROM ".db::getPrefix()."accounts a INNER JOIN ".db::getPrefix()."account_transactions_log l ON (a.account_id=l.account_id) ORDER BY l.transaction_date DESC LIMIT 50";
         $query = db::select($sql);
 		$rows  = db::fetchAll($query);
         if (empty($rows) === TRUE) {
