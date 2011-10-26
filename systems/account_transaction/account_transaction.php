@@ -3,7 +3,7 @@ class Account_Transaction
 {
     public static function listTransactions()
     {
-        $sql   = "SELECT a.account_id, a.account_name, a.account_number, l.transaction_amount, EXTRACT(EPOCH FROM l.transaction_date) AS transaction_date, l.transaction_description, l.account_balance_previous, l.account_balance_new FROM ".db::getPrefix()."accounts a INNER JOIN ".db::getPrefix()."account_transactions_log l ON (a.account_id=l.account_id) ORDER BY l.transaction_date DESC LIMIT 50";
+        $sql   = "SELECT a.account_id, a.account_name, a.account_number, l.transaction_amount, EXTRACT(EPOCH FROM l.transaction_date) AS transaction_date, l.transaction_description, l.account_balance_previous, l.account_balance_new, u.username AS transaction_by FROM ".db::getPrefix()."accounts a INNER JOIN ".db::getPrefix()."account_transactions_log l ON (a.account_id=l.account_id) INNER JOIN ".db::getPrefix()."users u ON (l.transaction_by=u.user_id) ORDER BY l.transaction_date DESC LIMIT 50";
         $query = db::select($sql);
 		$rows  = db::fetchAll($query);
         if (empty($rows) === TRUE) {
@@ -19,6 +19,7 @@ class Account_Transaction
                    'account_name',
                    'account_number',
                    'transaction_amount',
+                   'transaction_by',
                    'transaction_description',
                   );
         foreach ($rows as $row) {
@@ -105,10 +106,11 @@ class Account_Transaction
          * transaction id, save the log, update the account etc. The db can handle
          * doing all of that for us.
          */
-        $sql    = "INSERT INTO ".db::getPrefix()."account_transactions(account_id, transaction_amount, transaction_date, transaction_description) VALUES (:account_id, :transaction_amount, :transaction_date, :transaction_description)";
+        $sql    = "INSERT INTO ".db::getPrefix()."account_transactions(account_id, transaction_amount, transaction_date, transaction_description, transaction_by) VALUES (:account_id, :transaction_amount, :transaction_date, :transaction_description, :transaction_by)";
         $values = array(
                    ':account_id'         => $_POST['account_id'],
                    ':transaction_amount' => $_POST['transaction_amount'],
+                   ':transaction_by'     => session::get('user'),
                    ':transaction_date'   => $transaction_date,
                    ':transaction_description' => $_POST['transaction_description'],
                   );

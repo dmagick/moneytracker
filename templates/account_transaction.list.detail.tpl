@@ -5,6 +5,7 @@
                 <td>~transaction_amount~</td>
                 <td>~transaction_date~</td>
                 <td>~transaction_description~</td>
+                <td>~transaction_by~</td>
 
 		<td>&nbsp;</td>
 	</tr>

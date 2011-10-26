@@ -4,7 +4,7 @@ class Account
 
     public static function getAccounts()
     {
-        $sql   = "SELECT account_id, account_name, account_number, account_balance FROM ".db::getPrefix()."accounts ORDER BY account_name DESC";
+        $sql   = "SELECT account_id, account_name, account_number, account_balance, username FROM ".db::getPrefix()."accounts a INNER JOIN ".db::getPrefix()."users u ON (a.account_by=u.user_id) ORDER BY account_name DESC";
         $query = db::select($sql);
 		$rows  = db::fetchAll($query);
         return $rows;
@@ -20,7 +20,7 @@ class Account
 
         template::serveTemplate('account.list.header');
         foreach ($rows as $row) {
-            foreach (array('account_id', 'account_name', 'account_number', 'account_balance') as $keyword) {
+            foreach (array('account_id', 'account_name', 'account_number', 'account_balance', 'username') as $keyword) {
                 $value = $row[$keyword];
                 template::setKeyword('account.list.detail', $keyword, $value);
             }
@@ -46,9 +46,10 @@ class Account
             return;
         }
 
-        $sql    = "INSERT INTO ".db::getPrefix()."accounts(account_name, account_number, account_balance) VALUES (:account_name, :account_number, :account_balance)";
+        $sql    = "INSERT INTO ".db::getPrefix()."accounts(account_name, account_number, account_balance, account_by) VALUES (:account_name, :account_number, :account_balance, :account_by)";
         $values = array(
                    ':account_balance' => $_POST['account_balance'],
+                   ':account_by'      => session::get('user'),
                    ':account_name'    => $_POST['account_name'],
                    ':account_number'  => $_POST['account_number'],
                   );
@@ -84,9 +85,10 @@ class Account
             return;
         }
 
-        $sql    = "UPDATE ".db::getPrefix()."accounts SET account_balance=:account_balance, account_name=:account_name, account_number=:account_number WHERE account_id=:account_id";
+        $sql    = "UPDATE ".db::getPrefix()."accounts SET account_balance=:account_balance, account_name=:account_name, account_number=:account_number, account_by=:account_by WHERE account_id=:account_id";
         $values = array(
                    ':account_balance' => $_POST['account_balance'],
+                   ':account_by'      => session::get('user'),
                    ':account_id'      => $account_id,
                    ':account_name'    => $_POST['account_name'],
                    ':account_number'  => $_POST['account_number'],

@@ -6,6 +6,7 @@
 		<th>Transaction Amount</th>
 		<th>Transaction Date</th>
 		<th>Transaction Description</th>
+		<th>Transaction By</th>
 		<th>&nbsp;</th>
 	</tr>
 
