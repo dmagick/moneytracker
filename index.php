@@ -30,6 +30,7 @@ $systems = array(
     'account_transaction',
     'session',
     'messagelog',
+    'user',
 );
 foreach ($systems as $system) {
 	require $basedir.'/systems/'.$system.'/'.$system.'.php';
@@ -37,6 +38,7 @@ foreach ($systems as $system) {
 session::setDir($config['cachedir']);
 session::start();
 messagelog::setLog($config['cachedir'].'/debug.log');
+
 function isValidSystem($systemName)
 {
     global $systems;
