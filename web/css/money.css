@@ -79,3 +79,22 @@ body {
 	width: 25%;
 }
 
+.flash-message-success {
+	padding: 2px;
+	border: 1px solid #6e936e;
+	background: #f4f4f4;
+	width: 100%;
+}
+
+.flash-message-error {
+	padding: 2px;
+	border: 1px solid #936e6e;
+	background: #f4f4f4;
+	width: 100%;
+}
+
+.flash-message-image {
+	width: 22px;
+	float: left;
+}
+
