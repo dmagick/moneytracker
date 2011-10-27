@@ -4,6 +4,16 @@ drop table money_account_transactions_log;
 drop table money_account_transactions;
 drop table money_accounts;
 drop table money_users;
+drop table money_user_login_locks;
+
+create table money_user_login_locks
+(
+  ip text,
+  start_time timestamp,
+  end_time timestamp,
+  attempts int default 0
+);
+create index money_user_login_locks_details on money_user_login_locks(ip, start_time, end_time);
 
 create table money_users
 (
