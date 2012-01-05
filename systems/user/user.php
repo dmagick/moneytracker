@@ -2,6 +2,12 @@
 
 class user
 {
+    /**
+     * Number of minutes to lock someone out from too many
+     * attempts to log in.
+     */
+    private static $_lockTimeLimit = 5;
+
     public static function process()
     {
         template::serveTemplate('user.header');
@@ -106,7 +112,7 @@ class user
             $values = array(
                     ':ip'         => $ip,
                     ':start_time' => $now,
-                    ':end_time'   => date('r', strtotime($now.' + 5 minutes')),
+                    ':end_time'   => date('r', strtotime($now.' + '.self::$_lockTimeLimit.' minutes')),
                     ':attempts'   => 1,
                     );
             $result = db::execute($sql, $values);
