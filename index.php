@@ -18,9 +18,6 @@ ini_set('include_path', $basedir.':');
 
 require $basedir.'/config/config.php';
 
-// Include all of our required systems.
-// Since we're using a consistent structure,
-// we can just loop over 'em to do it all in one go.
 $systems = array(
 	'db',
 	'frontend',
@@ -32,14 +29,19 @@ $systems = array(
     'messagelog',
     'user',
 );
-foreach ($systems as $system) {
-	require $basedir.'/systems/'.$system.'/'.$system.'.php';
-}
-session::setDir($config['cachedir']);
-session::start();
-messagelog::setLog($config['cachedir'].'/debug.log');
 
-function isValidSystem($systemName)
+/**
+ * Helper function to make sure the requested system is valid.
+ * Just in case someone decides to change the url (hoping for
+ * information disclosure etc).
+ *
+ * @param string $systemName The system being checked
+ *
+ * @uses systems
+ *
+ * @return boolean
+ */
+function isValidSystem($systemName=NULL)
 {
     global $systems;
     if (in_array($systemName, $systems) === TRUE) {
@@ -48,8 +50,24 @@ function isValidSystem($systemName)
     return FALSE;
 }
 
+/**
+ * Include all of our required systems.
+ * Since we're using a consistent structure,
+ * we can just loop over 'em to do it all in one go.
+ */
+foreach ($systems as $system) {
+	require $basedir.'/systems/'.$system.'/'.$system.'.php';
+}
+
+session::setDir($config['cachedir']);
+session::start();
+
+messagelog::setLog($config['cachedir'].'/debug.log');
+
 db::connect($config['db']);
+
 url::setUrl($config['url']);
+
 template::setDir($basedir.'/templates');
 
 frontend::display();
