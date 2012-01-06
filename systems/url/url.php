@@ -37,7 +37,7 @@ class url
      * @uses getUrl
      *
      * @return void
-     * @throw  exception Throws an exception if the url hasn't been
+     * @throws exception Throws an exception if the url hasn't been
      *                   set previously.
      *
      * @static
