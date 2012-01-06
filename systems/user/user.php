@@ -17,6 +17,7 @@
  */
 class user
 {
+
     /**
      * Number of minutes to lock someone out from too many
      * attempts to log in.
@@ -62,8 +63,6 @@ class user
      * After that, checks the appropriate options are filled in
      * (username/password and there is a session token set).
      * Then finally checks the values match the db.
-     *
-     * @static
      *
      * @uses session::get
      * @uses session::set
