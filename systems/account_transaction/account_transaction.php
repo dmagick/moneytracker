@@ -1,11 +1,45 @@
 <?php
+/**
+ * Account_Transaction class file.
+ *
+ * @author Chris Smith <dmagick@gmail.com>
+ * @version 1.0
+ * @package money
+ */
+
+/**
+ * Account_Transaction class.
+ * Handles fetching, listing, processing of new
+ * and existing transactions.
+ *
+ * @package money
+ */
 class Account_Transaction
 {
+
+    /**
+     * Uses templates to show a list of transactions for viewing/editing.
+     *
+     * Shows the
+     * - account id, name, number, previous/new balances,
+     * - transaction amount, date, description,
+     * - who did the transaction
+     * for the last 50 transactions.
+     *
+     * @return void
+     *
+     * @uses db::fetchAll
+     * @uses db::getPrefix
+     * @uses db::select
+     * @uses template::display
+     * @uses template::serveTemplate
+     * @uses template::setKeyword
+     */
     public static function listTransactions()
     {
         $sql   = "SELECT a.account_id, a.account_name, a.account_number, l.transaction_amount, EXTRACT(EPOCH FROM l.transaction_date) AS transaction_date, l.transaction_description, l.account_balance_previous, l.account_balance_new, u.username AS transaction_by FROM ".db::getPrefix()."accounts a INNER JOIN ".db::getPrefix()."account_transactions_log l ON (a.account_id=l.account_id) INNER JOIN ".db::getPrefix()."users u ON (l.transaction_by=u.user_id) ORDER BY l.transaction_date DESC LIMIT 50";
         $query = db::select($sql);
-		$rows  = db::fetchAll($query);
+        $rows  = db::fetchAll($query);
         if (empty($rows) === TRUE) {
             echo 'No transactions have been created.';
             return;
@@ -38,6 +72,35 @@ class Account_Transaction
         template::display();
     }
 
+    /**
+     * Handles processing of a new transaction.
+     *
+     * If you are not posting data, it shows the account_transaction.new
+     * template, with a list of accounts shown to choose from.
+     * If there is only one account in the system, that account is
+     * automatically chosen.
+     *
+     * If you are posting data, it checks to make sure certain values are set.
+     *
+     * If they aren't set, appropriate flash messages are saved.
+     * If everything is ok the new account is created.
+     *
+     * The user is redirected back to the account list (in both cases).
+     *
+     * @return void Doesn't return anything, processes the templates.
+     *
+     * @uses db::beginTransaction
+     * @uses db::commitTransaction
+     * @uses db::execute
+     * @uses db::getPrefix
+     * @uses db::rollbackTransaction
+     * @uses session::get
+     * @uses session::setFlashMessage
+     * @uses template::display
+     * @uses template::serveTemplate
+     * @uses template::setKeyword
+     * @uses url::redirect
+     */
     public static function newTransaction()
     {
         if (empty($_POST) === TRUE) {
@@ -133,8 +196,25 @@ class Account_Transaction
         url::redirect('account_transaction/new');
     }
 
-	public static function process($action='list')
-	{
+    /**
+     * Processes the account-transaction system.
+     *
+     * Works out what you are trying to do based on the action passed in,
+     * then shows the appropriate sub-process.
+     *
+     * @param string $action The action being performed. Defaults to listing
+     *                       of transactions.
+     *
+     * @return mixed     Returns the value from the sub-process being processed.
+     * @throws exception Throws an exception if an action isn't known.
+     *
+     * @uses account_transaction::newTransaction
+     * @uses account_transaction::listTransactions
+     * @uses template::display
+     * @uses template::serveTemplate
+     */
+    public static function process($action='list')
+    {
 
         if (empty($action) === TRUE) {
             $action = 'list';
@@ -143,16 +223,16 @@ class Account_Transaction
         template::serveTemplate('account_transaction.header');
         template::display();
 
-		if ($action === 'new') {
-			return self::newTransaction();
-		}
+        if ($action === 'new') {
+            return self::newTransaction();
+        }
 
-		if ($action === 'list') {
-			return self::listTransactions();
-		}
+        if ($action === 'list') {
+            return self::listTransactions();
+        }
 
-		throw new Exception("Unknown action $action");
-	}
+        throw new Exception("Unknown action $action");
+    }
 }
 
 /* vim: set expandtab ts=4 sw=4: */
