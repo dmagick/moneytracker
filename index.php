@@ -1,4 +1,13 @@
 <?php
+/**
+ * Index file handles the start up stuff.
+ * Its all then handed off to the appropriate
+ * system for it to deal with the rest.
+ *
+ * @author Chris Smith <dmagick@gmail.com>
+ * @version 1.0
+ * @package money
+ */
 
 ini_set('display_errors', true);
 error_reporting(E_ALL);
@@ -18,6 +27,16 @@ ini_set('include_path', $basedir.':');
 
 require $basedir.'/config/config.php';
 
+/**
+ * A list of systems.
+ * All of these are included at the start.
+ * Everything is made available.
+ * This list is also used to by isValidSystem
+ * to make sure a user isn't trying to cause errors by
+ * making up their own url.
+ * 
+ * @see isValidSystem
+ */
 $systems = array(
 	'db',
 	'frontend',
