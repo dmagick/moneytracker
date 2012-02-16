@@ -1,0 +1,17 @@
+<?php
+require_once dirname(__FILE__).'/../../init.php';
+require_once $basedir.'/tests/money.test';
+
+class account_createTest extends MoneyTests
+{
+
+    public function testNoAccounts()
+    {
+        $expected = array();
+        $result   = account::getAccounts();
+        PHPUnit_Framework_Assert::assertSame($expected, $result);
+    }
+
+}
+
+/* vim: set expandtab ts=4 sw=4 filetype=php: */
