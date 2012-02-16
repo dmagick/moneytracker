@@ -1,0 +1,21 @@
+<?php
+
+class moneyTests extends PHPUnit_Framework_TestCase
+{
+    protected function setUp()
+    {
+        db::beginTransaction();
+
+        parent::setUp();
+    }
+
+    protected function tearDown()
+    {
+        // Get rid of all data written to the DB.
+        parent::tearDown();
+
+        db::rollbackTransaction();
+    }
+}
+
+/* vim: set expandtab ts=4 sw=4 filetype=php: */
