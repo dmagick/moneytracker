@@ -12,6 +12,48 @@ class account_createTest extends MoneyTests
         PHPUnit_Framework_Assert::assertSame($expected, $result);
     }
 
+    public function testSaveAccount()
+    {
+        // make sure there are none.
+        $expected = array();
+        $result   = account::getAccounts();
+        PHPUnit_Framework_Assert::assertSame($expected, $result);
+
+        $accountInfo = array(
+                        'account_balance' => 50,
+                        'account_by'      => 1,
+                        'account_name'    => 'Test',
+                        'account_number'  => 'Test',
+                       );
+        $expected = TRUE;
+        $result   = account::saveAccount($accountInfo);
+
+        $accountList = account::getAccounts();
+        PHPUnit_Framework_Assert::assertNotEmpty($accountList, 'An account was not created');
+
+        $firstAccount = array_shift($accountList);
+
+        PHPUnit_Framework_Assert::assertEquals(50.00, $firstAccount['account_balance']);
+
+        $accountInfo = array(
+                        'account_balance' => 100,
+                        'account_by'      => 1,
+                        'account_name'    => 'Test',
+                        'account_number'  => 'Test',
+                        'account_id'      => $firstAccount['account_id'],
+                       );
+        $expected = TRUE;
+        $result   = account::saveAccount($accountInfo);
+
+        $accountList = account::getAccounts();
+        PHPUnit_Framework_Assert::assertNotEmpty($accountList, 'An account was not updated');
+
+        $firstAccount = array_shift($accountList);
+
+        PHPUnit_Framework_Assert::assertEquals(100.00, $firstAccount['account_balance']);
+
+    }
+
 }
 
 /* vim: set expandtab ts=4 sw=4 filetype=php: */
