@@ -110,14 +110,14 @@ class Account
             return;
         }
 
-        $sql    = "INSERT INTO ".db::getPrefix()."accounts(account_name, account_number, account_balance, account_by) VALUES (:account_name, :account_number, :account_balance, :account_by)";
-        $values = array(
-                   ':account_balance' => $_POST['account_balance'],
-                   ':account_by'      => session::get('user'),
-                   ':account_name'    => $_POST['account_name'],
-                   ':account_number'  => $_POST['account_number'],
-                  );
-        $result = db::execute($sql, $values);
+        $accountInfo = array(
+                        'account_balance' => $_POST['account_balance'],
+                        'account_by'      => session::get('user'),
+                        'account_name'    => $_POST['account_name'],
+                        'account_number'  => $_POST['account_number'],
+                       );
+        $result      = self::saveAccount($accountInfo);
+
         if ($result === TRUE) {
             session::setFlashMessage('New account created successfully.', 'success');
             session::save();
@@ -127,6 +127,52 @@ class Account
         session::setFlashMessage('New account not created successfully.', 'error');
         session::save();
         url::redirect('account/new');
+    }
+
+    /**
+     * Save account info into the database.
+     *
+     * If there is an account id present in the array, then that id is updated.
+     * If it's not present, a new account is created.
+     *
+     * @param array $accountInfo The account info to either create a new one or
+     *                           update an existing one.
+     *
+     * @return boolean Returns true if it worked, otherwise false.
+     */
+    public static function saveAccount(array $accountInfo)
+    {
+        /**
+         * account_id isn't a required field -
+         * in case we're creating a new account.
+         */
+        $requiredFields = array(
+                           'account_balance',
+                           'account_by',
+                           'account_name',
+                           'account_number',
+                          );
+
+        foreach ($requiredFields as $requiredField) {
+            if (isset($accountInfo[$requiredField]) === FALSE) {
+                throw new Exception('Unable to save an account, some fields are missing.');
+            }
+        }
+
+        $values = array(
+                   ':account_balance' => $accountInfo['account_balance'],
+                   ':account_by'      => $accountInfo['account_by'],
+                   ':account_name'    => $accountInfo['account_name'],
+                   ':account_number'  => $accountInfo['account_number'],
+                  );
+        if (isset($accountInfo['account_id']) === FALSE) {
+            $sql = "INSERT INTO ".db::getPrefix()."accounts(account_name, account_number, account_balance, account_by) VALUES (:account_name, :account_number, :account_balance, :account_by)";
+        } else {
+            $sql                  = "UPDATE ".db::getPrefix()."accounts SET account_balance=:account_balance, account_name=:account_name, account_number=:account_number, account_by=:account_by WHERE account_id=:account_id";
+            $values['account_id'] = $accountInfo['account_id'];
+        }
+        $result = db::execute($sql, $values);
+        return $result;
     }
 
     /**
@@ -173,16 +219,15 @@ class Account
             return;
         }
 
-        $sql    = "UPDATE ".db::getPrefix()."accounts SET account_balance=:account_balance, account_name=:account_name, account_number=:account_number, account_by=:account_by WHERE account_id=:account_id";
-        $values = array(
-                   ':account_balance' => $_POST['account_balance'],
-                   ':account_by'      => session::get('user'),
-                   ':account_id'      => $account_id,
-                   ':account_name'    => $_POST['account_name'],
-                   ':account_number'  => $_POST['account_number'],
-                  );
+        $accountInfo = array(
+                        'account_balance' => $_POST['account_balance'],
+                        'account_by'      => session::get('user'),
+                        'account_id'      => $account_id,
+                        'account_name'    => $_POST['account_name'],
+                        'account_number'  => $_POST['account_number'],
+                       );
+        $result      = self::saveAccount($accountInfo);
 
-        $result = db::execute($sql, $values);
         if ($result === TRUE) {
             session::setFlashMessage('Account updated successfully.', 'success');
             url::redirect('account/list');
