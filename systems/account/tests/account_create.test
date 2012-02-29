@@ -10,6 +10,12 @@ class account_createTest extends MoneyTests
         $expected = array();
         $result   = account::getAccounts();
         PHPUnit_Framework_Assert::assertSame($expected, $result);
+
+        ob_start();
+        account::listAccounts();
+        $contents = ob_get_contents();
+        ob_end_clean();
+        PHPUnit_Framework_Assert::assertContains('No accounts have been created', $contents);
     }
 
     public function testSaveAccount()
@@ -19,14 +25,28 @@ class account_createTest extends MoneyTests
         $result   = account::getAccounts();
         PHPUnit_Framework_Assert::assertSame($expected, $result);
 
+        // Lets see if we get an exception if a required argument is missing.
+        $accountInfo = array(
+                        'account_name'    => 'Test',
+                        'account_number'  => 'Test',
+                       );
+        try {
+            $caught = FALSE;
+            account::saveAccount($accountInfo);
+        } catch (Exception $e) {
+            $caught = TRUE;
+        }
+
+        PHPUnit_Framework_Assert::assertTrue($caught, 'saveAccount should throw an exception if some values are missing.');
+
         $accountInfo = array(
                         'account_balance' => 50,
                         'account_by'      => 1,
                         'account_name'    => 'Test',
                         'account_number'  => 'Test',
                        );
-        $expected = TRUE;
-        $result   = account::saveAccount($accountInfo);
+        $expected    = TRUE;
+        $result      = account::saveAccount($accountInfo);
 
         $accountList = account::getAccounts();
         PHPUnit_Framework_Assert::assertNotEmpty($accountList, 'An account was not created');
@@ -35,11 +55,24 @@ class account_createTest extends MoneyTests
 
         PHPUnit_Framework_Assert::assertEquals(50.00, $firstAccount['account_balance']);
 
+        // Check the display.
+        ob_start();
+        account::listAccounts();
+        $contents = ob_get_contents();
+        ob_end_clean();
+
+        // Check the header is there.
+        PHPUnit_Framework_Assert::assertContains('Account Name', $contents);
+
+        // Check the edit link for the account is there, and the account balance.
+        PHPUnit_Framework_Assert::assertContains('/account/edit/'.$firstAccount['account_id'], $contents);
+        PHPUnit_Framework_Assert::assertContains($firstAccount['account_balance'], $contents);
+
         $accountInfo = array(
                         'account_balance' => 100,
                         'account_by'      => 1,
-                        'account_name'    => 'Test',
-                        'account_number'  => 'Test',
+                        'account_name'    => 'test',
+                        'account_number'  => 'test',
                         'account_id'      => $firstAccount['account_id'],
                        );
         $expected = TRUE;
@@ -49,9 +82,101 @@ class account_createTest extends MoneyTests
         PHPUnit_Framework_Assert::assertNotEmpty($accountList, 'An account was not updated');
 
         $firstAccount = array_shift($accountList);
-
         PHPUnit_Framework_Assert::assertEquals(100.00, $firstAccount['account_balance']);
 
+        // Check the display.
+        ob_start();
+        account::listAccounts();
+        $contents = ob_get_contents();
+        ob_end_clean();
+
+        // Check the header is there.
+        PHPUnit_Framework_Assert::assertContains('Account Name', $contents);
+
+        // Check the edit link for the account is there, and the account balance.
+        PHPUnit_Framework_Assert::assertContains('/account/edit/'.$firstAccount['account_id'], $contents);
+        PHPUnit_Framework_Assert::assertContains($firstAccount['account_balance'], $contents);
+    }
+
+    public function testNewAccount()
+    {
+        global $config;
+        $contents = self::getUrl($config['url'].'/account/new');
+        PHPUnit_Framework_Assert::assertNotSame(FALSE, $contents, 'Unable to log in to create a new account');
+
+        PHPUnit_Framework_Assert::assertContains('Create a new account', $contents);
+
+        // We don't need to specify the account_by param here,
+        // since we're logging in through the web it uses the id
+        // from the session.
+        $accountInfo = array(
+                        'account_name'    => 'test',
+                        'account_number'  => 'test',
+                       );
+
+
+        //// Check invalid balance.
+        $accountInfo['account_balance'] = 'abcdef';
+        $contents = self::getUrl($config['url'].'/account/new', $accountInfo);
+        PHPUnit_Framework_Assert::assertContains('enter a proper account balance', $contents);
+
+        // Check a proper balance.
+        $accountInfo['account_balance'] = 10.00;
+        $contents = self::getUrl($config['url'].'/account/new', $accountInfo);
+        PHPUnit_Framework_Assert::assertContains('New account created successfully', $contents);
+    }
+
+    public function testEditAccount()
+    {
+        global $config;
+
+        $contents = self::getUrl($config['url'].'/account/list');
+
+        PHPUnit_Framework_Assert::assertContains('Edit Account', $contents);
+        preg_match('!<a href="'.$config['url'].'/account/edit/(.*?)">!', $contents, $matches);
+        $account_id = $matches[1];
+
+        $contents = self::getUrl($config['url'].'/account/edit/'.$account_id);
+        PHPUnit_Framework_Assert::assertContains('Edit this account', $contents);
+
+        $accountInfo = array(
+                        'account_balance' => 100.25,
+                        'account_name'    => 'name change',
+                        'account_number'  => 'number change',
+                       );
+        $contents = self::getUrl($config['url'].'/account/edit/'.$account_id, $accountInfo);
+        PHPUnit_Framework_Assert::assertContains('Account updated successfully', $contents);
+
+        $contents = self::getUrl($config['url'].'/account/edit/'.$account_id);
+        PHPUnit_Framework_Assert::assertContains('name="account_balance" value="'.$accountInfo['account_balance'].'"', $contents);
+    }
+
+    public function testProcessAccount()
+    {
+        db::execute('TRUNCATE '.db::getPrefix().'accounts CASCADE');
+        ob_start();
+        $contents = account::process('list');
+        ob_end_clean();
+        PHPUnit_Framework_Assert::assertContains('List Accounts', $contents);
+        PHPUnit_Framework_Assert::assertContains('New Account', $contents);
+
+        ob_start();
+        $contents = account::process('new');
+        ob_end_clean();
+        PHPUnit_Framework_Assert::assertContains('Create a new account', $contents);
+
+        ob_start();
+        $contents = account::process('new');
+        ob_end_clean();
+        PHPUnit_Framework_Assert::assertContains('Create a new account', $contents);
+
+        try {
+            $caught = FALSE;
+            account::process('unknown');
+        } catch (Exception $e) {
+            $caught = TRUE;
+        }
+        PHPUnit_Framework_Assert::assertTrue($caught, 'process should throw an exception if an invalid action is passed.');
     }
 
 }
