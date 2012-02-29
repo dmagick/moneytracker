@@ -139,6 +139,8 @@ class account_createTest extends MoneyTests
         $contents = self::getUrl($config['url'].'/account/edit/'.$account_id);
         PHPUnit_Framework_Assert::assertContains('Edit this account', $contents);
 
+        // This is a decimal number so we can match it properly.
+        // Otherwise php chops it off doing the assertion at the end.
         $accountInfo = array(
                         'account_balance' => 100.25,
                         'account_name'    => 'name change',
