@@ -2,6 +2,22 @@
 
 class moneyTests extends PHPUnit_Framework_TestCase
 {
+    protected static $_loginAttempts = 0;
+    protected static $_cookieFile    = NULL;
+
+    public static function setUpBeforeClass()
+    {
+        db::beginTransaction();
+        db::execute('TRUNCATE '.db::getPrefix().'accounts CASCADE');
+        db::commitTransaction();
+        self::$_cookieFile = dirname(__FILE__).'/../cache/unit.cookie';
+        if (file_exists(self::$_cookieFile) === TRUE) {
+            unlink(self::$_cookieFile);
+        }
+
+        parent::setUpBeforeClass();
+    }
+
     protected function setUp()
     {
         db::beginTransaction();
@@ -16,6 +32,51 @@ class moneyTests extends PHPUnit_Framework_TestCase
 
         db::rollbackTransaction();
     }
+
+    protected static function getUrl($url='', array $post_data=array())
+    {
+        if (self::$_loginAttempts > 1) {
+            return FALSE;
+        }
+
+        self::$_loginAttempts++;
+
+        $curl = curl_init();
+
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_COOKIEFILE, self::$_cookieFile);
+        curl_setopt($curl, CURLOPT_COOKIEJAR, self::$_cookieFile);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        if (empty($post_data) === FALSE) {
+            curl_setopt($curl, CURLOPT_POST, 1);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $post_data);
+        }//end if
+
+        $result = curl_exec($curl);
+        curl_close($curl);
+
+        if (strpos($result, 'You need to log in') === FALSE) {
+            self::$_loginAttempts--;
+            return $result;
+        }
+
+        $tokenCheck = preg_match('!<input type="hidden" name="token" value="(.*?)" />!', $result, $matches);
+        $token      = $matches[1];
+
+        $post_login_data = array(
+                            'token'        => $token,
+                            'username'     => 'test',
+                            'userpassword' => 'test',
+                           );
+
+        $result2 = self::getUrl($url, $post_login_data);
+
+        self::$_loginAttempts--;
+
+        return $result2;
+    }
+
 }
 
 /* vim: set expandtab ts=4 sw=4 filetype=php: */
