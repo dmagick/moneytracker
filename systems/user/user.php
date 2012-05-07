@@ -53,7 +53,6 @@ class user
         } else {
             self::authCheck();
         }
-        template::serveTemplate('user.footer');
         template::serveTemplate('footer');
         template::display();
     }
