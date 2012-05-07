@@ -53,6 +53,7 @@ class user
         } else {
             self::authCheck();
         }
+        template::serveTemplate('user.footer');
         template::serveTemplate('footer');
         template::display();
     }
@@ -81,7 +82,7 @@ class user
     {
         if (self::_isLockedOut(FALSE) === TRUE) {
             $token = self::setToken();
-            session::setFlashMessage('You have been locked out for too many attempted logins.', 'error');
+            session::setFlashMessage('You have been locked out. Try again later.', 'error');
             template::setKeyword('user.login', 'token', $token);
             template::serveTemplate('user.login');
             return;
@@ -124,7 +125,7 @@ class user
             $user = self::checkLoginDetails($username, $userpassword);
         } catch (Exception $e) {
             $token = self::setToken();
-            session::setFlashMessage('The username or password are incorrect. Try again.', 'error');
+            session::setFlashMessage('Check your username and password and try again.', 'error');
             template::setKeyword('user.login', 'token', $token);
             template::serveTemplate('user.login');
             self::_isLockedOut(TRUE);
