@@ -156,28 +156,30 @@ class account_createTest extends MoneyTests
     public function testProcessAccount()
     {
         db::execute('TRUNCATE '.db::getPrefix().'accounts CASCADE');
+
         ob_start();
-        $contents = account::process('list');
+        account::process('list');
+        $contents = ob_get_contents();
         ob_end_clean();
+
         PHPUnit_Framework_Assert::assertContains('List Accounts', $contents);
         PHPUnit_Framework_Assert::assertContains('New Account', $contents);
 
         ob_start();
-        $contents = account::process('new');
+        account::process('new');
+        $contents = ob_get_contents();
         ob_end_clean();
         PHPUnit_Framework_Assert::assertContains('Create a new account', $contents);
 
         ob_start();
-        $contents = account::process('new');
-        ob_end_clean();
-        PHPUnit_Framework_Assert::assertContains('Create a new account', $contents);
-
         try {
             $caught = FALSE;
             account::process('unknown');
         } catch (Exception $e) {
             $caught = TRUE;
         }
+        $contents = ob_get_contents();
+        ob_end_clean();
         PHPUnit_Framework_Assert::assertTrue($caught, 'process should throw an exception if an invalid action is passed.');
     }
 
