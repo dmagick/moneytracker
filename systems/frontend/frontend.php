@@ -69,6 +69,8 @@ class frontend
                     call_user_func_array(array($system, 'process'), array($bits));
                 }
             }
+        } else {
+            template::serveTemplate('home');
         }
 
         template::serveTemplate('footer');
