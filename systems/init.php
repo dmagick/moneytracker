@@ -9,8 +9,14 @@
  * @package money
  */
 
+/**
+ * Set up the base dir.
+ */
 $basedir = dirname(dirname(__FILE__));
 
+/**
+ * Of course we need our config.
+ */
 require $basedir.'/config/config.php';
 
 /**
