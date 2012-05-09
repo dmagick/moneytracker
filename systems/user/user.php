@@ -42,7 +42,7 @@ class user
      */
     public static function process()
     {
-        template::serveTemplate('user.header');
+        template::serveTemplate('header.empty');
         template::display();
 
         if (empty($_POST) === TRUE) {
