@@ -1,3 +1,4 @@
+<div>Note - only showing the last 50 transactions.</div>
 <table id="account_transaction_list">
     <tr>
         <th>Account Name</th>

@@ -10,10 +10,9 @@
         </div>
 
         <div class="account-field">
-            Transaction Amount:
+            Type:
         </div>
         <div class="account-value">
-            <input type="text" name="transaction_amount" id="transaction_amount" />&nbsp;& type:
             <select name="transaction_type">
                 <option value="deposit">Deposit</option>
                 <option value="withdrawl" SELECTED>Withdrawl/Payment</option>
@@ -21,15 +20,21 @@
         </div>
 
         <div class="account-field">
-            Transaction Date (leave blank for today):<br/>
-            Format is yyyy-mm-dd hh:mm
+            Amount:
         </div>
         <div class="account-value">
-            <input type="text" name="transaction_date" />
+            <input type="text" name="transaction_amount" id="transaction_amount" />
         </div>
 
         <div class="account-field">
-            Transaction Description:
+            Date:
+        </div>
+        <div class="account-value">
+            <input type="text" name="transaction_date" id="transaction_date" value="~transaction_date~" />
+        </div>
+
+        <div class="account-field">
+            Description:
         </div>
         <div class="account-value">
             <input type="text" name="transaction_description" id="transaction_description" />

@@ -3,21 +3,21 @@
     ~flashmessage~
     <form method="post" action="~url::baseurl~/account/edit/~account_id~">
         <div class="account-field">
-            Account Name:
+            Name:
         </div>
         <div class="account-value">
             <input type="text" name="account_name" value="~account_name~" id="account_name" />
         </div>
 
         <div class="account-field">
-            Account Number:
+            Number:
         </div>
         <div class="account-value">
             <input type="text" name="account_number" value="~account_number~"/>
         </div>
 
         <div class="account-field">
-            Account Balance:
+            Balance:
         </div>
         <div class="account-value">
             <input type="text" name="account_balance" value="~account_balance~" id="account_balance" />
