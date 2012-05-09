@@ -1,4 +1,13 @@
 <?php
+/**
+ * Init file handles the start up stuff.
+ * Its all then handed off to the appropriate
+ * system for it to deal with the rest.
+ *
+ * @author Chris Smith <dmagick@gmail.com>
+ * @version 1.0
+ * @package money
+ */
 
 $basedir = dirname(dirname(__FILE__));
 
@@ -79,4 +88,4 @@ try {
     exit;
 }
 
-
+/* vim: set expandtab ts=4 sw=4: */

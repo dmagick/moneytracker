@@ -1,8 +1,7 @@
 <?php
 /**
- * Index file handles the start up stuff.
- * Its all then handed off to the appropriate
- * system for it to deal with the rest.
+ * Index file handles setting up a couple of base things.
+ * Init sets up the rest.
  *
  * @author Chris Smith <dmagick@gmail.com>
  * @version 1.0
