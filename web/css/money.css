@@ -62,14 +62,22 @@ body {
 }
 
 .account-field {
-    width: 300px;
+    width: 150px;
     float: left;
     margin: 2px;
 }
 
 .account-value {
-    width: 500px;
+    width: 600px;
     margin: 2px;
+}
+
+input[type="text"] {
+    width: 300px;
+}
+
+select {
+    width: 305px;
 }
 
 #account_transaction_list, #account_list {
