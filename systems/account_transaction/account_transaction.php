@@ -110,8 +110,8 @@ class Account_Transaction
             $selected = '';
             if (sizeof($accounts) > 1) {
                 $selected = ' SELECTED';
+                $select .= '<option value="-1"'.$selected.'>Which account?</option>';
             }
-            $select .= '<option value="-1"'.$selected.'>Which account?</option>';
 
             $selected = '';
             if (sizeof($accounts) == 1) {
@@ -121,6 +121,9 @@ class Account_Transaction
                 $select .= '<option value="'.$account['account_id'].'"'.$selected.'>'.$account['account_name'].'</option>';
             }
             $select .= '</select>';
+
+            $defaultDate = date('Y-m-d H:i');
+            template::setKeyword('account_transaction.new', 'transaction_date', $defaultDate);
             template::setKeyword('account_transaction.new', 'account_list', $select);
             template::serveTemplate('account_transaction.new');
             template::display();
