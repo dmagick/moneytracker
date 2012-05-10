@@ -62,14 +62,14 @@ body {
 }
 
 .account-field {
-    width: 150px;
+    width: 120px;
     float: left;
-    margin: 2px;
+    margin: 5px;
 }
 
 .account-value {
     width: 600px;
-    margin: 2px;
+    margin: 5px;
 }
 
 input[type="text"], input[type="password"] {
