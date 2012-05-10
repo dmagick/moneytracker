@@ -112,6 +112,7 @@ class MessageLog
         if (self::$_logFile === NULL) {
             throw new Exception("Log file has not been set");
         }
+        $time = date('Y-m-d H:i:s');
         $type = gettype($info);
         switch ($type) {
             case 'boolean':
@@ -131,7 +132,7 @@ class MessageLog
             default:
                 throw new Exception("Not sure how to handle this type of variable: ".gettype($info));
         }
-        error_log($info."\n", 3, self::$_logFile);
+        error_log($time." ".str_replace("\n", "\n\t", $info)."\n", 3, self::$_logFile);
     }
 }
 
