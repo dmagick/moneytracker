@@ -82,14 +82,9 @@ template::setDir($basedir.'/templates');
 try {
     db::connect($config['db']);
 } catch (Exception $e) {
-    template::serveTemplate('header.empty');
-    template::display();
-    echo '<div class="middle"><br/>';
-    echo "We seem to be having some technical issues.<br/>";
-    echo "Admins have been notified.<br/>";
-    echo "Please try again shortly.<br/>";
-    echo '</div>';
-    template::serveTemplate('footer');
+    messagelog::enable();
+    messagelog::LogMessage($e->getMessage());
+    template::serveTemplate('error.technical');
     template::display();
     exit;
 }
