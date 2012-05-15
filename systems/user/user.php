@@ -30,18 +30,27 @@ class user
      * This does all the work when viewed in a browser.
      * It displays the appropriate template (with keyword replacements).
      *
+     * @param string $action The action being performed. Defaults to login.
+     *                       Only handles login and logout.
+     *
      * @uses template::display
      * @uses template::serveTemplate
      * @uses template::setKeyword
-     * @uses user::setToken
      * @uses user::authCheck
+     * @uses user::logout
+     * @uses user::setToken
      *
      * @return void
      *
      * @static
      */
-    public static function process()
+    public static function process($action='login')
     {
+        if ($action === 'logout') {
+            self::logout();
+            return;
+        }
+
         template::serveTemplate('header.empty');
         template::display();
 
@@ -261,6 +270,25 @@ class user
                 );
         $result = db::execute($sql, $values);
         return $user['user_id'];
+    }
+
+    /**
+     * Log the user out of the system.
+     *
+     * @uses session::has
+     * @uses session::remove
+     * @uses session::setFlashMessage
+     * @uses url::redirect
+     * @uses user::setToken
+     */
+    private static function logout()
+    {
+        $token = self::setToken();
+        if (session::has('user') === TRUE) {
+            session::setFlashMessage('You have been logged out.', 'success');
+            session::remove('user');
+        }
+        url::redirect('/');
     }
 }
 

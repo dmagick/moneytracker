@@ -39,12 +39,26 @@ body {
     width: 40%;
 }
 
+#header-wrapper {
+    padding: 1px;
+}
+
 #header {
+    margin-top: 10px;
+    margin-left: 10%;
+    text-align: left;
+    font-size: 10px;
+    margin-right: 200px;
+    float: left;
+}
+
+#header-right {
     margin-top: 10px;
     margin-right: 10%;
     margin-left: 10%;
     text-align: left;
     font-size: 10px;
+    float: right;
 }
 
 #account-header {

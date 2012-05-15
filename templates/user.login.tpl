@@ -1,6 +1,6 @@
                 <div class="middle">
                     <div>
-                        <h2>Login</h2>
+                        <h2>Login to manage your money</h2>
                         ~flashmessage~
                         <form method="post" action="~url::baseurl~/user/login">
                             <input type="hidden" name="token" value="~token~" />

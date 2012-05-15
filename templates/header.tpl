@@ -6,10 +6,15 @@
     <script type="text/javascript" src="~url::baseurl~/web/js/jquery-1.5.min.js"></script>
     </head>
     <body>
-        <div class="header-link" id="header">
-            <a href="~url::baseurl~/">Home</a>&nbsp;|&nbsp;
-            <a href="~url::baseurl~/account">Accounts Info</a>&nbsp;|&nbsp;
-            <a href="~url::baseurl~/account_transaction">Transaction Info</a>
+        <div id="header-wrapper">
+            <span class="header-link" id="header">
+                <a href="~url::baseurl~/">Home</a>&nbsp;|&nbsp;
+                <a href="~url::baseurl~/account">Accounts Info</a>&nbsp;|&nbsp;
+                <a href="~url::baseurl~/account_transaction">Transaction Info</a>
+            </span>
+            <span class="header-link" id="header-right">
+                <a href="~url::baseurl~/user/logout">Logout</a>
+            </span>
         </div>
         <div class="wrapper">
             <div class="content">
