@@ -1,4 +1,4 @@
-<div>
+<div class="middle">
     <h2>Create a new account</h2>
     ~flashmessage~
     <form method="post" action="~url::baseurl~/account/new">

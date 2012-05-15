@@ -1,5 +1,5 @@
-<div>
-    <h2>Create a new transaction</h2>
+<div class="middle">
+    <h2>Add a new transaction</h2>
     ~flashmessage~
     <form method="post" action="~url::baseurl~/account_transaction/new">
         <div class="account-field">
