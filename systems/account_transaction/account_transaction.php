@@ -18,6 +18,47 @@ class Account_Transaction
 {
 
     /**
+     * Get transaction details from the database.
+     *
+     * Gets the account id, name, number, transaction amount,
+     * transaction date, description, previous balance, and
+     * who logged the transaction.
+     * This is ordered by transaction date in descending order.
+     *
+     * @param integer $number The number of transactions to get.
+     *                        Defaults to 50.
+     *
+     * @return array Returns an array of transaction information.
+     *
+     * @uses db::fetchAll
+     * @uses db::getPrefix
+     * @uses db::select
+     */
+    public static function getTransactions($number=50)
+    {
+        $sql   = "SELECT
+                    a.account_id,
+                    a.account_name,
+                    a.account_number,
+                    l.transaction_amount,
+                    EXTRACT(EPOCH FROM l.transaction_date) AS transaction_date,
+                    l.transaction_description,
+                    l.account_balance_previous,
+                    l.account_balance_new,
+                    u.username AS transaction_by
+                  FROM
+                    ".db::getPrefix()."accounts a
+                    INNER JOIN ".db::getPrefix()."account_transactions_log l ON (a.account_id=l.account_id)
+                    INNER JOIN ".db::getPrefix()."users u ON (l.transaction_by=u.user_id)
+                  ORDER BY
+                    l.transaction_date DESC
+                  LIMIT ".(int)$number;
+        $query = db::select($sql);
+        $rows  = db::fetchAll($query);
+        return $rows;
+    }
+
+    /**
      * Uses templates to show a list of transactions for viewing/editing.
      *
      * Shows the
@@ -37,9 +78,8 @@ class Account_Transaction
      */
     public static function listTransactions()
     {
-        $sql   = "SELECT a.account_id, a.account_name, a.account_number, l.transaction_amount, EXTRACT(EPOCH FROM l.transaction_date) AS transaction_date, l.transaction_description, l.account_balance_previous, l.account_balance_new, u.username AS transaction_by FROM ".db::getPrefix()."accounts a INNER JOIN ".db::getPrefix()."account_transactions_log l ON (a.account_id=l.account_id) INNER JOIN ".db::getPrefix()."users u ON (l.transaction_by=u.user_id) ORDER BY l.transaction_date DESC LIMIT 50";
-        $query = db::select($sql);
-        $rows  = db::fetchAll($query);
+        $rows = self::getTransactions();
+
         if (empty($rows) === TRUE) {
             echo 'No transactions have been created.';
             return;
