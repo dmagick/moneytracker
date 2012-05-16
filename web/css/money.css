@@ -4,6 +4,18 @@ body {
     font-size: 14px;
 }
 
+ul {
+    margin: 0px;
+}
+
+ul {
+	list-style: none;
+}
+
+ul li:before {
+    content: "\00BB \0020";
+}
+
 .header-link A {
     color: #6A6A6A;
     text-decoration: none;
