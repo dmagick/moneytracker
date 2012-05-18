@@ -99,11 +99,11 @@ ul li:before {
 }
 
 input[type="text"], input[type="password"] {
-    width: 300px;
+    width: 200px;
 }
 
 select {
-    width: 305px;
+    width: 205px;
 }
 
 #account_transaction_list, #account_list {
