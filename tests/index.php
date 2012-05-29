@@ -63,6 +63,10 @@ class MoneyTests_AllTests
             if ($entry === '.' || $entry === '..') {
                 continue;
             }
+            if ($entry === 'jpgraph') {
+                continue;
+            }
+
             $fullpath = $dir.'/'.$entry;
             if (is_dir($fullpath) === TRUE) {
                 $foundTests = self::_getTests($fullpath);
@@ -70,7 +74,7 @@ class MoneyTests_AllTests
                 continue;
             }
             $info = pathinfo($fullpath);
-            if ($info['extension'] === 'test') {
+            if (isset($info['extension']) === TRUE && $info['extension'] === 'test') {
                 $tests[] = $fullpath;
             }
         }
