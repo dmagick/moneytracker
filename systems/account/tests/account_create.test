@@ -162,7 +162,7 @@ class account_createTest extends MoneyTests
         $contents = ob_get_contents();
         ob_end_clean();
 
-        PHPUnit_Framework_Assert::assertContains('List Accounts', $contents);
+        PHPUnit_Framework_Assert::assertContains('View Accounts', $contents);
         PHPUnit_Framework_Assert::assertContains('New Account', $contents);
 
         ob_start();
