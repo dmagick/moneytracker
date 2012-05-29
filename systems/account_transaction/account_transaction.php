@@ -34,8 +34,24 @@ class Account_Transaction
      * @uses db::getPrefix
      * @uses db::select
      */
-    public static function getTransactions($number=50)
+    public static function getTransactions($orderBy='transaction_date', $direction='down', $number=50)
     {
+        $orderDirection = 'desc';
+        $dir            = strtolower($direction);
+        if ($dir === 'up' || $dir === 'asc') {
+            $orderDirection = 'asc';
+        }
+
+        $orderBy       = strtolower($orderBy);
+        $validOrderBys = array(
+            'transaction_date',
+            'account_name',
+            'transaction_amount',
+        );
+        if (in_array($orderBy, $validOrderBys) === FALSE) {
+            $orderBy = 'transaction_date';
+        }
+
         $sql   = "SELECT
                     a.account_id,
                     a.account_name,
@@ -51,7 +67,7 @@ class Account_Transaction
                     INNER JOIN ".db::getPrefix()."account_transactions_log l ON (a.account_id=l.account_id)
                     INNER JOIN ".db::getPrefix()."users u ON (l.transaction_by=u.user_id)
                   ORDER BY
-                    l.transaction_date DESC
+                    ".$orderBy." ".$orderDirection."
                   LIMIT ".(int)$number;
         $query = db::select($sql);
         $rows  = db::fetchAll($query);
