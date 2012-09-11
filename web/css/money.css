@@ -122,15 +122,11 @@ select {
 
 .flash-message-success {
     padding: 2px;
-    border: 1px solid #e5e5e5;
-    background: #f9f9f9;
     width: 100%;
 }
 
 .flash-message-error {
     padding: 2px;
-    border: 1px solid #e5e5e5;
-    background: #f9f9f9;
     width: 100%;
 }
 
