@@ -4,13 +4,16 @@ class moneyTests extends PHPUnit_Framework_TestCase
 {
     protected static $_loginAttempts = 0;
     protected static $_cookieFile    = NULL;
+    protected static $_baseDir       = NULL;
 
     public static function setUpBeforeClass()
     {
+        self::$_baseDir = dirname(dirname(__FILE__));
+
         db::beginTransaction();
         db::execute('TRUNCATE '.db::getPrefix().'accounts CASCADE');
         db::commitTransaction();
-        self::$_cookieFile = dirname(__FILE__).'/../cache/unit.cookie';
+        self::$_cookieFile = self::$_baseDir.'/cache/unit.cookie';
         if (file_exists(self::$_cookieFile) === TRUE) {
             unlink(self::$_cookieFile);
         }
@@ -31,6 +34,11 @@ class moneyTests extends PHPUnit_Framework_TestCase
         parent::tearDown();
 
         db::rollbackTransaction();
+    }
+
+    protected static function getBaseDir()
+    {
+        return self::$_baseDir;
     }
 
     protected static function getUrl($url='', array $post_data=array())
