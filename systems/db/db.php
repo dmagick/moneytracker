@@ -82,10 +82,24 @@ class db
         }
         self::$_dbconn = $dbconn;
 
+        if (isset($details['prefix']) === FALSE) {
+            $details['prefix'] = '';
+        }
         self::$_tablePrefix = $details['prefix'];
 
         return TRUE;
+    }
 
+    /**
+     * Disconnect the database connection if it was connected before.
+     *
+     * @return void
+     */
+    public static function disconnect()
+    {
+        if (self::$_dbconn !== NULL) {
+            self::$_dbconn = NULL;
+        }
     }
 
     /**
