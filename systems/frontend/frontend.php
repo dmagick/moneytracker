@@ -76,7 +76,12 @@ class frontend
             template::display();
             $transactionInfo = account_transaction::getTransactions();
             if (empty($transactionInfo) === TRUE) {
-                template::serveTemplate('home.empty');
+                $accounts = account::getAccounts();
+                if (empty($accounts) === TRUE) {
+                    template::serveTemplate('home.empty.noaccounts');
+                } else {
+                    template::serveTemplate('home.empty.notransactions');
+                }
             } else {
                 session::set('transactionInfo', $transactionInfo);
                 template::serveTemplate('home');
