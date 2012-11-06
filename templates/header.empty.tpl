@@ -2,7 +2,7 @@
 <html>
     <head>
     <title>Money Tracker</title>
-    <link rel="stylesheet" type="text/css" href="~url::baseurl~/web/css/money.css" />
+    <link rel="stylesheet" type="text/css" href="~url::baseurl~/web/css/money.css?v=2012110601" />
     <script type="text/javascript" src="~url::baseurl~/web/js/jquery-1.5.min.js"></script>
     </head>
     <body>
