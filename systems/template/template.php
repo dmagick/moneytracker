@@ -273,6 +273,10 @@ class Template
      */
     public static function display()
     {
+        if (headers_sent() === FALSE) {
+            header('Content-type: text/html; charset=utf-8');
+        }
+
         foreach (self::$_templateStack as $template) {
             $content = self::getTemplate($template);
             $content = self::processKeywords($content, $template);
