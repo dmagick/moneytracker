@@ -94,8 +94,8 @@ ul li:before {
 }
 
 .account-value {
-    width: 600px;
     margin: 5px;
+    margin-left: 130px;
 }
 
 input[type="text"], input[type="password"] {
