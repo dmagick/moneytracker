@@ -13,10 +13,15 @@
             Type:
         </div>
         <div class="account-value">
-            <select name="transaction_type">
-                <option value="deposit">Deposit</option>
-                <option value="withdrawl" SELECTED>Withdrawl/Payment</option>
-            </select>
+            <input type="radio" name="transaction_type" value="deposit" id="deposit"><label for="deposit">Deposit</label><br/>
+            <input type="radio" name="transaction_type" value="withdrawl" id="withdrawl" CHECKED><label for="withdrawl">Withdrawl/Payment</label><br/>
+            <input type="radio" name="transaction_type" value="transfer" id="transfer"><label for="transfer">Transfer</label>
+        </div>
+        <div class="account-field">
+            Transfer To:
+        </div>
+        <div class="account-value">
+            ~transfer_list~
         </div>
 
         <div class="account-field">

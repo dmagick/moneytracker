@@ -161,7 +161,7 @@ class Account_Transaction
     {
         if (empty($_POST) === TRUE) {
             $accounts = Account::getAccounts();
-            $select  = '<select name="account_id" id="account_id">';
+            $select  = '<select name="~ID~" id="~ID~">';
 
             $selected = '';
             if (sizeof($accounts) > 1) {
@@ -180,7 +180,8 @@ class Account_Transaction
 
             $defaultDate = date('Y-m-d H:i');
             template::setKeyword('account_transaction.new', 'transaction_date', $defaultDate);
-            template::setKeyword('account_transaction.new', 'account_list', $select);
+            template::setKeyword('account_transaction.new', 'account_list',  str_replace('~ID~', 'account_id',  $select));
+            template::setKeyword('account_transaction.new', 'transfer_list', str_replace('~ID~', 'transfer_id', $select));
             template::serveTemplate('account_transaction.new');
             template::display();
             return;
@@ -220,24 +221,85 @@ class Account_Transaction
             $transaction_date = $_POST['transaction_date'];
         }
 
-        db::beginTransaction();
-        /**
-         * Updating the main account balance and saving the transaction log
-         * is done in a trigger in the database. It's safer that way, and it
-         * already has all the info it needs to do it. Here we'd have to get the new
-         * transaction id, save the log, update the account etc. The db can handle
-         * doing all of that for us.
-         */
-        $sql    = "INSERT INTO ".db::getPrefix()."account_transactions(account_id, transaction_amount, transaction_date, transaction_description, transaction_by) VALUES (:account_id, :transaction_amount, :transaction_date, :transaction_description, :transaction_by)";
-        $values = array(
-                   ':account_id'         => $_POST['account_id'],
-                   ':transaction_amount' => $_POST['transaction_amount'],
-                   ':transaction_by'     => session::get('user'),
-                   ':transaction_date'   => $transaction_date,
-                   ':transaction_description' => $_POST['transaction_description'],
-                  );
+        $transactionType = $_POST['transaction_type'];
 
-        $result = db::execute($sql, $values);
+        db::beginTransaction();
+
+        switch ($transactionType)
+        {
+
+            case 'transfer':
+                $from = $_POST['account_id'];
+                $to   = $_POST['transfer_id'];
+
+                if ($from == $to) {
+                    session::setFlashMessage('You can\'t transfer to and from the same account.', 'error');
+                    $result = FALSE;
+                } else {
+                    $sql    = "INSERT INTO ".db::getPrefix()."account_transactions(account_id, transaction_amount, transaction_date, transaction_description, transaction_by, transaction_type) VALUES (:account_id, :transaction_amount, :transaction_date, :transaction_description, :transaction_by, :transaction_type)";
+
+                    $reduce   = (float)$_POST['transaction_amount'];
+                    $increase = (float)$_POST['transaction_amount'];
+
+                    if ($reduce > 0) {
+                        $reduce = 0 - $reduce;
+                    }
+
+                    if ($increase < 0) {
+                        $increase = abs($increase);
+                    }
+
+                    // Taking it out of 'from' account first.
+                    $values = array(
+                        ':account_id'              => $_POST['account_id'],
+                        ':transaction_amount'      => $reduce,
+                        ':transaction_by'          => session::get('user'),
+                        ':transaction_date'        => $transaction_date,
+                        ':transaction_description' => $_POST['transaction_description'],
+                        ':transaction_type'        => $transactionType,
+                    );
+
+                    $result = db::execute($sql, $values);
+
+                    // If that worked, put it in the 'to' account.
+                    if ($result === TRUE) {
+                        // Make sure the amount is > 0.
+
+                        $values = array(
+                            ':account_id'              => $_POST['transfer_id'],
+                            ':transaction_amount'      => $increase,
+                            ':transaction_by'          => session::get('user'),
+                            ':transaction_date'        => $transaction_date,
+                            ':transaction_description' => $_POST['transaction_description'],
+                            ':transaction_type'        => $transactionType,
+                        );
+
+                        $result = db::execute($sql, $values);
+                    }
+                }
+            break;
+
+            default:
+                /**
+                 * Updating the main account balance and saving the transaction log
+                 * is done in a trigger in the database. It's safer that way, and it
+                 * already has all the info it needs to do it. Here we'd have to get the new
+                 * transaction id, save the log, update the account etc. The db can handle
+                 * doing all of that for us.
+                 */
+                $sql    = "INSERT INTO ".db::getPrefix()."account_transactions(account_id, transaction_amount, transaction_date, transaction_description, transaction_by, transaction_type) VALUES (:account_id, :transaction_amount, :transaction_date, :transaction_description, :transaction_by, :transaction_type)";
+                $values = array(
+                    ':account_id'              => $_POST['account_id'],
+                    ':transaction_amount'      => $_POST['transaction_amount'],
+                    ':transaction_by'          => session::get('user'),
+                    ':transaction_date'        => $transaction_date,
+                    ':transaction_description' => $_POST['transaction_description'],
+                    ':transaction_type'        => $transactionType,
+                );
+
+                $result = db::execute($sql, $values);
+        }
+
         if ($result === TRUE) {
             $transaction_result = db::commitTransaction();
             if ($transaction_result === TRUE) {
