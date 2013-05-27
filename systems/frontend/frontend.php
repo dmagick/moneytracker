@@ -38,8 +38,11 @@ class frontend
     public static function display()
     {
         $page = '';
-        if (isset($_SERVER['PATH_INFO']) === TRUE) {
-            $page = trim($_SERVER['PATH_INFO'], '/');
+        if (isset($_SERVER['REQUEST_URI']) === TRUE && isset($_SERVER['HTTP_HOST']) === TRUE) {
+            $protocol = 'http';
+            $page     = $protocol.'//'.$_SERVER['HTTP_HOST'].'/'.$_SERVER['REQUEST_URI'];
+            $page     = substr($page, strlen(url::getUrl())); 
+            $page     = trim($page, '/');
         }
 
         if (session::has('user') === FALSE) {
