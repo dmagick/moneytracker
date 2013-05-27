@@ -36,7 +36,7 @@ class Account
                     INNER JOIN ".db::getPrefix()."users u 
                     ON (a.account_by=u.user_id)
                   ORDER BY
-                    account_name DESC";
+                    account_name ASC";
         $query = db::select($sql);
         $rows  = db::fetchAll($query);
         return $rows;
