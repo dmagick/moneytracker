@@ -52,13 +52,11 @@ class user
         }
 
         template::serveTemplate('header.empty');
-        template::display();
 
         if (empty($_POST) === TRUE) {
             $token = self::setToken();
             template::setKeyword('user.login', 'token', $token);
             template::serveTemplate('user.login');
-            template::display();
         } else {
             self::authCheck();
         }

@@ -73,7 +73,6 @@ class frontend
             }
         } else {
             template::serveTemplate('header');
-            template::display();
             $transactionInfo = account_transaction::getTransactions();
             if (empty($transactionInfo) === TRUE) {
                 $accounts = account::getAccounts();

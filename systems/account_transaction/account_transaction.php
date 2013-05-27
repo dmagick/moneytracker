@@ -342,7 +342,6 @@ class Account_Transaction
         }
 
         template::serveTemplate('account_transaction.header');
-        template::display();
 
         if ($action === 'new') {
             return self::newTransaction();

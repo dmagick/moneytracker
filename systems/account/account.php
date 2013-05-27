@@ -264,7 +264,6 @@ class Account
         }
 
         template::serveTemplate('account.header');
-        template::display();
 
         if ($action === 'new') {
             return self::newAccount();
