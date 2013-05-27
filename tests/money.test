@@ -10,8 +10,21 @@ class moneyTests extends PHPUnit_Framework_TestCase
     {
         self::$_baseDir = dirname(dirname(__FILE__));
 
+        $userSql    = 'INSERT INTO '.db::getPrefix().'users (username, passwd, useractive)';
+        $userSql   .= ' SELECT :username, :passwd, :active';
+        $userSql   .= ' WHERE NOT EXISTS (';
+        $userSql   .= '    SELECT username FROM '.db::getPrefix().'users';
+        $userSql   .= '    WHERE username=:usercheck';
+        $userSql   .= ')';
+        $userValues = array(
+                       ':username'  => 'test',
+                       ':usercheck' => 'test',
+                       ':passwd'    => sha1('test'),
+                       ':active'    => 'y',
+                      );
         db::beginTransaction();
         db::execute('TRUNCATE '.db::getPrefix().'accounts CASCADE');
+        db::execute($userSql, $userValues);
         db::commitTransaction();
         self::$_cookieFile = self::$_baseDir.'/cache/unit.cookie';
         if (file_exists(self::$_cookieFile) === TRUE) {
@@ -19,6 +32,24 @@ class moneyTests extends PHPUnit_Framework_TestCase
         }
 
         parent::setUpBeforeClass();
+    }
+
+    public static function tearDownAfterClass()
+    {
+        $userSql    = 'DELETE FROM '.db::getPrefix().'users WHERE username=:testuser';
+        $userValues = array(
+                       ':testuser' => 'test',
+                      );
+
+        db::beginTransaction();
+        db::execute('TRUNCATE '.db::getPrefix().'accounts CASCADE');
+        db::execute($userSql, $userValues);
+        db::commitTransaction();
+        if (file_exists(self::$_cookieFile) === TRUE) {
+            unlink(self::$_cookieFile);
+        }
+
+        parent::tearDownAfterClass();
     }
 
     protected function setUp()
